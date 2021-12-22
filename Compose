@@ -1,0 +1,120 @@
+#include<iostream>
+#include<string>
+using namespace std;
+//构建运动-新兴运动-极限飞盘  三级的继承关系
+ //Sports类的创建 
+class Sports{
+    private:
+        string name;
+    public:
+        void setInfo(string);      //以下类的创建大同小异 包含构造函数 友元函数 输出函数三类    区别仅在于private成员部分 
+        void print();
+        Sports();
+        friend ostream& operator<<(ostream& put,Sports& temp);
+};
+
+ostream& operator<<(ostream& put,Sports& temp){
+	temp.print(); //直接调用函数进行作为重载的函数体真香  不过别忘了返回！ 
+	return put;
+}
+
+Sports::Sports(){
+    name = "";
+}
+
+void Sports::print(){
+    cout<<"name:"<<name<<" ";
+}
+
+void Sports::setInfo(string s){
+    name = s;
+}
+//Emerging_Sports类的创建 
+class Emerging_Sports{
+    public:
+       Emerging_Sports();
+       Emerging_Sports(const Sports&,int a,int b,string c);
+       friend ostream& operator<<(ostream& output,Emerging_Sports& occasional);
+       void print();
+    private:
+       Sports temp;
+       int number_player;   //新增运动参与人数、比赛时长、比赛规则 
+       int game_time;
+       string rules;
+};
+
+Emerging_Sports::Emerging_Sports(){
+    number_player = 0;
+    game_time = 0;
+    rules = "";
+}
+
+Emerging_Sports::Emerging_Sports(const Sports& a,int b,int c,string d){//没给第一类的形参赋值 输出时它当然只能是空啦
+	temp = a;
+    number_player = b;
+	game_time = c;
+	rules = d;
+}
+
+void Emerging_Sports::print(){
+    temp.print();
+    cout<<" number_player:"<<number_player<<" "<<"game_time:"<<game_time<<" "<<"rules:"<<rules<<" ";
+}
+
+ostream& operator<<(ostream& output,Emerging_Sports& occasional){
+    occasional.print();
+    return output;
+}
+
+class Ultimate_Disc{
+    private:
+      string use_tool;     //新增比赛用具、比赛最重要的部分 
+      string most_valuable;
+      Emerging_Sports provisional;
+    public:
+      Ultimate_Disc();
+      Ultimate_Disc(const Emerging_Sports&,string& a,string& b);
+      void print();
+      friend ostream& operator<<(ostream& out,Ultimate_Disc &provi);//provi是provisional的简称
+};
+
+Ultimate_Disc::Ultimate_Disc(){
+    use_tool = "";
+    most_valuable = "";
+}
+
+Ultimate_Disc::Ultimate_Disc(const Emerging_Sports& a,string& b,string& c)
+{
+    provisional = a;
+	use_tool = b;
+	most_valuable = c;
+}
+
+void Ultimate_Disc::print(){
+    provisional.print();
+    cout<<"use_tool:"<<use_tool<<" "<<"most_valuable:"<<most_valuable;
+}
+
+ostream& operator<<(ostream &out,Ultimate_Disc &provi){
+    provi.print();
+    return out;
+}
+
+int main(){
+    //测试Sports类
+    Sports first;
+    string a = "Ultimate_Disc";//直接输入一串字符串作为形参传递会报错 所以先提前创建一个字符串类型的变量 以下同理 
+    first.setInfo(a);
+    cout<<first<<endl;
+
+    //测试Emerging——Sports类
+    string b = "not contact";
+    Emerging_Sports second(first,14,60,b);
+    cout<<second<<endl;
+
+    //测试Ultimate——Disc类
+    string c = "Disc",d = "spiritual";
+    Ultimate_Disc third(second,c,d);
+    cout<<third;
+    return 0;
+}
