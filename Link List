@@ -1,0 +1,118 @@
+//Joseph ring problem
+#include<iostream>
+using namespace std;
+
+struct Node {
+	int id;
+	Node* next;
+};
+
+int main() {
+	int number = 0,out = 0;
+	cin>>number>>out;
+	Node *head,*tail = new Node;
+	head = tail;
+	head->id = 1;
+	for(int i=2; i<=number; i++) { //create the linked list itself
+		Node *temp = new Node;
+		temp->id = i;
+		tail->next = temp;//this is the essential part
+		tail = temp;
+	}
+	tail->next = head;//finish the connection
+	Node* now = tail;
+	while(now->next != now) {
+		for(int i=1; i<out; i++)   now = now->next;
+		now->next = now->next->next;
+	}
+	cout<<now->id;
+	return 0;
+}
+
+
+//the other way to finish this question
+#include  <iostream>
+using  namespace  std;
+class  person {
+	private:
+		int  no;            /*  人的编号  */
+		person  *next;      /*  指向相邻的下一个人  */
+	public:
+		person(int  num) {
+			no=num;
+			next=NULL;
+		}
+		void  setNext(person  *p) {
+			next=p;
+		}
+		int  getNo() {
+			return  no;
+		}
+		person  *getNext() {
+			return  next;
+		}
+};
+
+class  cycle {
+	private:
+		person  *start;        /*  开始数数的位置  */
+		int  out;                    /*  数到几出列  */
+		int  inQueue;            /*  队伍中现有人数  */
+	public:
+		cycle(int  num,  int  from,  int  whoOut) {
+			inQueue=num,  out=whoOut;
+			person  *prv=NULL,  *first=NULL;
+			for(int  i=1;  i<=num;  i++) {
+				person  *p=new  person(i);
+				if  (i==1)
+					first=p;
+				if  (i==from)
+					start=p;
+				if  (i>1)
+					prv->setNext(p);
+
+				prv=p;
+			}
+			prv->setNext(first);
+		}
+		int  getInQueue() {
+			return  inQueue;
+		}
+		void  cnt() {    /*  根据题目要求数数，确定出列的人，将该人从圈中剔除  */
+			person *p = start,*temp = NULL;//the linked list need two members
+			while(p->getNext()!=start)   p = p->getNext(); //pay atttion to the call 
+			for(int i=1; i<=out; i++) {
+				temp = p;
+				p = p->getNext();
+			}
+			start = p->getNext();//更新数据是尤为关键的一步
+			temp->setNext(p->getNext());
+			delete p;
+			inQueue--;
+		}
+
+		person  *getStart() {
+			return  start;
+		}
+
+		~cycle() {
+			delete  start;
+		}
+};
+
+int  main() {
+	int  n,k,  m  ;      /*  n  圈内人数    k  开始数数  m  可数出列  */
+	cin>>n>>k>>m;
+
+	cycle  *p=new  cycle(n,k,m);
+
+	while(p->getInQueue()>1)
+		p->cnt();
+
+	person  *winer=p->getStart();
+	cout<<winer->getNo()<<endl;
+
+	delete  p;
+
+	return  0;
+}
