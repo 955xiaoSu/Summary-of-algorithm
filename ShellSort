@@ -1,0 +1,16 @@
+template <typename T>
+void ShellSort(T array[], int length, int gap) { 
+	int needChange = 0; 
+	if (length / gap <= 1) needChange = 1;
+	else needChange = length / gap - 1; //将数组划分为n个区间段 那么起始位置需要改变(n - 1)次
+	int compare1 = 0, compare2 = gap;
+	while (needChange--) {
+		int count = 1;
+		while (count <= gap && compare2 < length) { //每一次的比较次数取决于间距 即两个相邻区间间隔为gap的元素进行交换判定 同时请注意边界
+			if (array[compare1] >= array[compare2])
+				std::swap(array[compare1], array[compare2]);
+			compare1++; compare2++;
+			count++; 
+		}
+	}
+}
