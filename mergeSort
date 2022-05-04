@@ -1,0 +1,36 @@
+template <typename T>
+void merge(T arr[], T temp[], int leftPos, int rightPos, int rightEnd) {
+ int leftEnd = rightPos - 1; //计算左边结束下标
+ int tempPos = leftPos; //起点为左序列的起点
+ int numEle = rightEnd - leftPos + 1; //计算合并序列的总元素个数
+ while (leftPos <= leftEnd && rightPos <= rightEnd) { //相当于比较两个指针所指向的元素大小 将较小的元素放入临时数组中
+     if (arr[leftPos] <= arr[rightPos])
+         temp[tempPos++] = arr[leftPos++];
+     else temp[tempPos++] = arr[rightPos++];
+ }
+ while (leftPos <= leftEnd) { //考虑到左序列有剩余元素
+     temp[tempPos++] = arr[leftPos++];
+ }
+ while (rightPos <= rightEnd) { //考虑到右序列有剩余元素
+     temp[tempPos++] = arr[rightPos++];
+ }
+ /* 将temp复制到arr */
+ for (int times = 1; times <= numEle; times++) {
+     arr[rightEnd] = temp[rightEnd];
+     rightEnd--;
+ }
+ return;
+}
+
+template <typename T>
+void mergeSort(T arr[], T temp[], int left, int right) { //归并排序是基于分治思想的一种排序算法
+ if (left < right) {
+     int mid = (left + right) / 2;
+     /* 分治中的"分" */
+     mergeSort(arr, temp, left, mid); //使左序列变为有序序列
+     mergeSort(arr, temp, mid + 1, right); //使右序列变为有序序列
+     /* 分治中的"治" */
+     merge(arr, temp, left, mid + 1, right); //将两个有序序列进行归并
+ }
+ return;
+}
