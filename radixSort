@@ -1,0 +1,38 @@
+int maxBit(int data[], int len) { //返回最大元素的位数
+    int maxData = data[0];
+    for (int sub = 1; sub < len; sub++) { //找最大值
+        if (data[sub] > maxData) maxData = data[sub];
+    }
+    int digit = 1;
+    while (maxData >= 10) { //计算位数
+        maxData /= 10;
+        digit++;
+    }
+    return digit;
+}
+
+void radixSort(int data[], int len) {
+    int* bucket = new int[len]; //创建临时数组记录数据
+    int* count = new int[10]; //计数器 统计最低位从0~9的元素个数分布情况
+    int divisor = 1; //每一轮的除数
+    int subBucket = 0, subCount = 0; //分别作为桶与计数器的下标
+    int LSD = 0; //Least Significance Digit
+    int frequency = maxBit(data, len); //为进行几轮循环提供依据
+    for (int times = 1; times <= frequency; times++) {
+        for (subCount = 0; subCount < 10; subCount++) count[subCount] = 0; //每一轮计数器q
+        for (subBucket = len - 1; subBucket >= 0; subBucket--) { //计数器开始计数
+            LSD = (data[subBucket] / divisor) % 10; //取最低数的数字
+            count[LSD]++;
+        }
+        /* 重定位 将count位置与bucket位置进行一一对应的映射 可以理解为二维向一维展开 */
+        for (subCount = 1; subCount < 10; subCount++) count[subCount] += count[subCount - 1];
+        for (subBucket = len - 1; subBucket >= 0; subBucket--) {
+            LSD = (data[subBucket] / divisor) % 10;
+            bucket[count[LSD] - 1] = data[subBucket]; //将原本data中的元素重定位至bucket中
+            count[LSD]--;
+        }
+        for (subBucket = 0; subBucket < len; subBucket++)
+            data[subBucket] = bucket[subBucket];
+        divisor *= 10;
+    }
+}
