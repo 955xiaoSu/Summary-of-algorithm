@@ -1,0 +1,184 @@
+// 声明：程序实现的前提是，该代数系统的运算结果是封闭的
+#include <iostream>
+#include <vector>
+using namespace std;
+
+// 定义运算表 
+char Otable1[27][27]; // 定义第一个运算表
+char Otable2[27][27]; // 定义第二个运算表，是为了支持对于代数系统是否可分配与同构两个性质的检验
+
+int totalNum = 0; // 第一个代数系统的元素个数
+int totalNum2 = 0; // 第二个代数系统的元素个数
+vector<char> function;
+
+// 功能：实现第一个代数系统运算表的初始化
+// 参数列表：void
+// 返回值：void
+void Init() {
+	for (int i = 0; i < 27; i++)	memset(Otable1[i], '0', 27); // 首先将运算表全部初始化为0
+	cout << endl << "Please input the number of elements your algebra system have (It can't exceed 26.) : " << endl;
+	cout << "$Dear User : ";
+	cin >> totalNum;	
+	cout << endl << "Then please input the operation table in matrix form : " << endl;
+	cout << "like this : | * 1 2 |" << endl
+		<< "            | 1 2 3 |" << endl
+		<< "            | 2 3 4 |";
+	Otable1[0][0] = '*'; // 作为象征性的运算符
+	cout << endl << '*' << " ";
+	for (int i = 1; i <= totalNum; i++) cin >> Otable1[0][i];
+	for (int i = 1; i <= totalNum; i++) {
+		for (int j = 0; j <= totalNum; j++) {
+			cin >> Otable1[i][j];
+		}
+	}
+}
+
+// 功能：判定第一个代数系统是否具有可结合性
+// 参数列表：void
+// 返回值：如果代数系统具有可结合性，返回true；反之，返回false
+bool haveCombiness() {
+	int baseValue = 1; // 以对角化的方式遍历运算表
+	int sub = 0; // 辅助下标 
+	for (int times = 1; times <= totalNum; times++) {
+		sub = baseValue;
+		for (int count = 0; count <= totalNum - times; count++) {
+			if (Otable1[baseValue][sub] != Otable1[sub][baseValue])
+				return false;
+			sub++;
+		}
+		baseValue++;
+	}
+	return true;
+}
+
+// 功能：实现第一个代数系统运算规则的重定义
+// 参数列表：void
+// 返回值：void
+void Init2() {
+	for (int i = 0; i < 27; i++)	memset(Otable2[i], '0', 27); // 首先将运算表全部初始化为0
+	cout << endl << "Please input the second operation table in matrix form : " << endl;
+	Otable2[0][0] = '#'; // 作为象征性的运算符
+	cout << '#' << " ";
+	for (int i = 1; i <= totalNum; i++) cout << Otable1[0][i] << " "; // 第一个代数系统与第二个代数系统的元素是一样的，故只需要重新定义运算的结果
+	cout << endl;
+	for (int i = 1; i <= totalNum; i++) {
+		cout << Otable1[i][0] << " ";
+		for (int j = 1; j <= totalNum; j++) {
+			cin >> Otable2[i][j];
+		}
+	}
+}
+
+// 功能：判定第一个代数系统是否具有分配性
+// 参数列表：void
+// 返回值：如果代数系统具有分配性，返回true；反之，返回false
+bool haveDistributivity() {
+	Init2();
+	int Elem1 = 0, Elem2 = 0, Elem3 = 0; // 根据分配性:x * ( y ^ z) = (x * y) ^ (x * z)，需要三个元素对应的下标
+	char left = '0', right = '0'; // left对应上式的左边的最终结果，right对应上式的右边的最终结果
+	for (Elem1 = 1; Elem1 <= totalNum - 2; Elem1++) {
+		for (Elem2 = Elem2 + 1; Elem2 <= totalNum - 1; Elem2++) {
+			for (Elem3 = Elem2 + 1; Elem3 <= totalNum; Elem3++) {
+				left = Otable1[Elem1][Otable2[Elem2][Elem3]];
+				right = Otable2[Otable1[Elem1][Elem2]][Otable1[Elem1][Elem3]];
+				if (left != right) return false;
+			}
+		}
+	}
+	return true;
+}
+
+// 功能：实现第二个代数系统运算表的初始化
+// 参数列表：void
+// 返回值：void
+void Init3() {
+	for (int i = 0; i < 27; i++)	memset(Otable2[i], '0', 27); // 首先将运算表全部初始化为0
+	cout << endl << "Please input the number of elements your algebra system have (It can't exceed 26.) : " << endl;
+	cout << "$Dear User : ";
+	cin >> totalNum2;
+	cout << endl << "Then please input the operation table in matrix form : " << endl;
+	Otable2[0][0] = '&'; // 作为象征性的运算符
+	cout << '&' << " ";
+	for (int i = 1; i <= totalNum2; i++) cin >> Otable2[0][i];
+	for (int i = 1; i <= totalNum2; i++) {
+		for (int j = 0; j <= totalNum2; j++) {
+			cin >> Otable2[i][j];
+		}
+	}
+}
+
+// 功能：建立两个代数系统之间的关系，即构造f(x)
+// 参数列表：void
+// 返回值：void
+void establishRelation() {
+	// 首先展示两个代数系统各自的元素
+	cout << endl << "Then you can definate the relationship between the first system and the second." << endl;
+	cout << "The first system's elements : ";
+	for (int i = 1; i <= totalNum; i++) cout << Otable1[0][i] << " ";
+	cout << endl << "The seond system's elements : ";
+	for (int i = 1; i <= totalNum2; i++) cout << Otable2[0][i] << " ";
+
+	// 初始化对应关系function 并且使元素的下标对齐
+	function.resize(totalNum + 1);
+	function.push_back('0');
+
+	// 构建第一个代数系统中元素与第二个代数系统的元素的对应关系
+	char temp = '0';	cout << endl;
+	for (int i = 1; i <= totalNum; i++) {
+		cout << Otable1[0][i] << " correspond to ";
+		cin >> temp;	function.push_back(temp);
+		cout << endl;
+	}
+}
+
+// 功能：判定两个代数系统是否同构
+// 参数列表：void
+// 返回值：如果两个代数系统同构，返回true；反之，返回false
+bool haveIsomorphism() {
+	// 对第二个代数系统进行初始化
+	Init3();
+	if (totalNum != totalNum2) return false; // 不满足满射，则两个代数系统一定不是同构
+
+	// 自定义构造映射关系f: A->B
+	establishRelation();
+
+	// 根据f(x * y) = f(x) & f(y)，判定两个代数系统是否同构
+	char left = '0', right = '0';
+	int Elem1 = 0, Elem2 = 0; 
+	for (Elem1 = 1; Elem1 <= totalNum; Elem1++) { // 遍历第一个代数系统中的组合
+		for (Elem2 = Elem1 + 1; Elem2 <= totalNum; Elem2++) {
+			left = function[Otable1[Elem1][Elem2]];
+			right = Otable2[function[Elem1]][function[Elem2]];
+			if (left != right) return false;
+		}
+	}
+	return true;
+}
+
+// 功能：作为登陆界面，提供对代数系统三个性质的判定接口
+// 参数列表：void
+// 返回值：void
+void UserInterface() {
+	// 对代数系统进行初始化
+	cout << endl << "Welcome to judge system! " << endl;
+	cout << "Discrete Mathematics's homework by 苏秉楷" << endl;
+	Init();
+	cout << endl << "Congratulations! So let's check this system's nature : " << endl;
+
+	// 判定代数系统是否具有可结合性
+	if (haveCombiness()) cout <<  "This system has combinableness.(此代数系统具有结合性)" << endl;
+	else cout << "This system dosen't have combinableness.(此代数系统不具有结合性)" << endl;
+
+	// 判定代数系统是否可分配
+	if (haveDistributivity()) cout << endl <<  "'*' can be distributed by '#'.('*'可以被'#'分配)" << endl;
+	else cout << endl << "'*' can't be distributed by '#'.('*'不可以被'#'分配)" << endl;
+
+	// 判定两代数系统是否同构
+	if (haveIsomorphism()) cout << endl << "These two algebraic are isomorphic.(这两个代数系统是同构的)" << endl;
+	else cout << endl << "These two algebraic aren't isomorphic.(这两个代数系统不是同构的)" << endl;
+}
+
+int main() {
+	UserInterface();
+	return 0;
+}
