@@ -1,2 +1,1 @@
-# CG_system
-As a HNUer,this is my assignment.
+These are some summary of algorithm.
