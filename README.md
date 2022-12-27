@@ -1,1 +1,1 @@
-These are some summary of algorithm.
+These are some algorithmic summaries.
