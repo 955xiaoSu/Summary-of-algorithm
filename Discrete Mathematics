@@ -161,7 +161,7 @@ bool haveIsomorphism() {
 void UserInterface() {
 	// 对代数系统进行初始化
 	cout << endl << "Welcome to judge system! " << endl;
-	cout << "Discrete Mathematics's homework by 苏秉楷" << endl;
+	cout << "Discrete Mathematics's homework by " << endl;
 	Init();
 	cout << endl << "Congratulations! So let's check this system's nature : " << endl;
 
